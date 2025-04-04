@@ -30,6 +30,7 @@ jobs:
         with:
           images: vmtuan/igpu-mqtt-monitor
           tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}}
             type=ref,event=branch
             type=sha,format=short
@@ -40,7 +41,5 @@ jobs:
           context: .
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            vmtuan/igpu-mqtt-monitor:${{ steps.meta.outputs.tags }}
-            vmtuan/igpu-mqtt-monitor:latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
