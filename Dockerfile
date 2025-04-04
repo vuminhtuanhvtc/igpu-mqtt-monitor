@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-LABEL maintainer="Tuan Vu <vuminhtuanhvtc@gmail.com>"
+LABEL maintainer="Tuan Vu <vuminhtuanhvtc@gmail.com>" 
 LABEL description="Monitor Intel iGPU usage and push to Home Assistant via MQTT"
 
 # Avoid prompts during package installation
@@ -27,7 +27,7 @@ RUN if [ "$(uname -m)" = "x86_64" ]; then \
     fi
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir paho-mqtt
+RUN pip3 install --no-cache-dir paho-mqtt typing_extensions
 
 # Create app directory
 WORKDIR /app
