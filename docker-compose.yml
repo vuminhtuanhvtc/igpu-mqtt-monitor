@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  igpu-mqtt-monitor:
+    container_name: igpu-mqtt-monitor
+    image: yourusername/igpu-mqtt-monitor:latest
+    restart: unless-stopped
+    privileged: true  # Required to access GPU hardware
+    environment:
+      - MQTT_HOST=homeassistant.local
+      - MQTT_PORT=1883
+      - MQTT_USERNAME=
+      - MQTT_PASSWORD=
+      - MQTT_UPDATE_INTERVAL=5
+    volumes:
+      - /dev/dri:/dev/dri  # Access to GPU devices
