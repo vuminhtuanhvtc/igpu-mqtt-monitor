@@ -1,4 +1,4 @@
-FROM ubuntu:22.04-slim
+FROM ubuntu:20.04
 
 LABEL maintainer="Tuan Vu <vuminhtuanhvtc@gmail.com>" 
 LABEL description="Monitor Intel iGPU usage and push to Home Assistant via MQTT"
