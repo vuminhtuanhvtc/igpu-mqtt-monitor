@@ -47,38 +47,22 @@ def get_gpu_info():
 # Function to get GPU usage statistics
 def get_gpu_usage():
     try:
-        # Run intel_gpu_top with a single iteration
-        cmd = "intel_gpu_top -J -s 100 -o - -l 1"
+        # Run intel_gpu_top with a single iteration (without -J option)
+        cmd = "intel_gpu_top -s 100 -o - -l 1"
         result = subprocess.check_output(cmd, shell=True, text=True)
         
-        # Parse the JSON output
-        data = {}
-        try:
-            # Try parsing the output as JSON
-            json_data = json.loads(result)
-            
-            # Extract the relevant data
-            engines = json_data.get('engines', {})
-            
-            data = {
-                'render': engines.get('Render/3D', {}).get('busy', 0),
-                'blitter': engines.get('Blitter', {}).get('busy', 0),
-                'video': engines.get('Video', {}).get('busy', 0),
-                'video_enhance': engines.get('VideoEnhance', {}).get('busy', 0)
-            }
-        except json.JSONDecodeError:
-            # Fallback to regex parsing if JSON parsing fails
-            render_match = re.search(r'Render/3D.+?(\d+)%', result)
-            blitter_match = re.search(r'Blitter.+?(\d+)%', result)
-            video_match = re.search(r'Video.+?(\d+)%', result)
-            video_enhance_match = re.search(r'VideoEnhance.+?(\d+)%', result)
-            
-            data = {
-                'render': int(render_match.group(1)) if render_match else 0,
-                'blitter': int(blitter_match.group(1)) if blitter_match else 0,
-                'video': int(video_match.group(1)) if video_match else 0,
-                'video_enhance': int(video_enhance_match.group(1)) if video_enhance_match else 0
-            }
+        # Parse the output using regex
+        render_match = re.search(r'Render/3D.+?(\d+)%', result)
+        blitter_match = re.search(r'Blitter.+?(\d+)%', result)
+        video_match = re.search(r'Video.+?(\d+)%', result)
+        video_enhance_match = re.search(r'VideoEnhance.+?(\d+)%', result)
+        
+        data = {
+            'render': int(render_match.group(1)) if render_match else 0,
+            'blitter': int(blitter_match.group(1)) if blitter_match else 0,
+            'video': int(video_match.group(1)) if video_match else 0,
+            'video_enhance': int(video_enhance_match.group(1)) if video_enhance_match else 0
+        }
             
         return data
     except Exception as e:
