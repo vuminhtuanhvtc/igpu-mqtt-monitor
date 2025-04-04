@@ -48,7 +48,7 @@ def get_gpu_info():
 def get_gpu_usage():
     try:
         # Run intel_gpu_top with a single iteration
-        cmd = "intel_gpu_top -J -s 100"
+        cmd = f"intel_gpu_top -J -s {update_interval * 1000} -o - -l 1"
         result = subprocess.check_output(cmd, shell=True, text=True)
         
         # Parse the JSON output
