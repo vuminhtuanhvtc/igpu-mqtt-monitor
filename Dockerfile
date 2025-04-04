@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM ubuntu:20.04-slim
 
 LABEL maintainer="Tuan Vu <vuminhtuanhvtc@gmail.com>" 
 LABEL description="Monitor Intel iGPU usage and push to Home Assistant via MQTT"
@@ -13,18 +13,19 @@ RUN apt-get update && \
     python3-pip \
     procps \
     pciutils \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Architecture-specific installation for intel-gpu-tools (only on amd64)
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        apt-get update && \
-        apt-get install -y --no-install-recommends intel-gpu-tools && \
-        apt-get clean && \
-        rm -rf /var/lib/apt/lists/* ; \
-    else \
-        echo "Running on non-x86_64 architecture, skipping intel-gpu-tools" ; \
-    fi
+# Install Intel GPU tools (latest version)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    software-properties-common && \
+    add-apt-repository ppa:oibaf/graphics-drivers && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends intel-gpu-tools && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir paho-mqtt typing_extensions
