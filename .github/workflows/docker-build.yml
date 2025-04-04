@@ -40,5 +40,7 @@ jobs:
           context: .
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            vmtuan/igpu-mqtt-monitor:${{ steps.meta.outputs.tags }}
+            vmtuan/igpu-mqtt-monitor:latest
           labels: ${{ steps.meta.outputs.labels }}
