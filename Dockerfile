@@ -6,29 +6,25 @@ LABEL description="Monitor Intel iGPU usage and push to Home Assistant via MQTT"
 # Avoid prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies
+# Install common dependencies first
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    wget \
-    gnupg \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Add non-free repository for intel-gpu-tools
-RUN echo "deb http://deb.debian.org/debian buster main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/debian-security buster/updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://deb.debian.org/debian buster-updates main contrib non-free" >> /etc/apt/sources.list
-
-# Install other dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    intel-gpu-tools \
     python3 \
     python3-pip \
     procps \
     pciutils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Architecture-specific installation for intel-gpu-tools (only on amd64)
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        apt-get update && \
+        apt-get install -y --no-install-recommends intel-gpu-tools && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/* ; \
+    else \
+        echo "Running on non-x86_64 architecture, skipping intel-gpu-tools" ; \
+    fi
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir paho-mqtt
